@@ -1,4 +1,4 @@
-#import "lib.typ": add_task_part, appendix, big_heading, template, wrap_with_big_heading
+#import "@local/bmstu-thesis:0.1.0": add_task_part, appendix, big_heading, template, wrap_with_big_heading
 
 #show: template.with()
 
