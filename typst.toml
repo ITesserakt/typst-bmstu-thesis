@@ -1,0 +1,7 @@
+[package]
+name = "bmstu-thesis"
+version = "0.1.0"
+entrypoint = "src/lib.typ"
+authors = ["ITesserakt <potryas85@mail.ru>"]
+description = "Template for thesis using BMSTU conventions"
+compiler = "0.14.0"
