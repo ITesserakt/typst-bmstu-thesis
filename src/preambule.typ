@@ -44,7 +44,7 @@
     justify: true,
     linebreaks: "optimized",
     first-line-indent: (amount: 1.25cm, all: true),
-    spacing: 0.75em,
+    spacing: 1em,
     leading: 0.75em,
   )
 
@@ -52,14 +52,17 @@
   show heading: set text(size: 14pt)
   show heading: set par(justify: false)
   show heading: set block(above: 2em, below: 1.5em, breakable: false)
-  show heading.where(depth: 1): it => { pagebreak(); it }
+  show heading.where(depth: 1): it => {
+    pagebreak()
+    it
+  }
   show heading.where(depth: 1): set heading(supplement: "Раздел")
   show heading.where(depth: 2): set heading(supplement: "Подраздел")
   show heading.where(depth: 3): set heading(supplement: "Пункт")
   show heading.where(depth: 4): set heading(supplement: "Подпункт")
 
-  set figure( supplement: "Рисунок", numbering: chapter_aware_numbering)
-  show figure: set block(breakable: true)
+  set figure(supplement: "Рисунок", numbering: chapter_aware_numbering)
+  show figure: set block(breakable: true, sticky: true)
   set figure.caption(separator: [ -- ])
   show figure.caption: set par(leading: 0.5em)
 
@@ -82,5 +85,39 @@
   set enum(indent: 1.25cm, numbering: "1)")
   set math.equation(numbering: chapter_aware_numbering.with(pattern: "(1.1)"))
 
+  show math.equation.where(block: true): set par(spacing: 2em)
+  // Автоматическая нумерация используемых формул
+  show math.equation.where(block: true): it => if (
+    it.numbering != none and (not it.has("label") or query(ref.where(target: it.label)).len() == 0)
+  ) [
+    #counter(math.equation).update(v => calc.max(0, v - 1))
+    #math.equation(it.body, block: true, numbering: none)
+  ] else {
+    it
+  }
+
+  // Именование рисунков и таблиц не учитывает падеж
+  show ref.where(form: "normal"): set ref(supplement: it => {
+    if it.func() == figure {
+      if it.kind == image {
+        return "рис. "
+      } else if it.kind == table {
+        return "табл."
+      }
+    }
+    it.supplement
+  })
+
   doc
 }
+
+#show: conf
+
+#lorem(100)
+
+$
+  a^2 + b^2 = c
+$ <eq>
+
+#lorem(100) @eq #lorem(100)
+
