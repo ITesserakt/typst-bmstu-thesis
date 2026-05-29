@@ -111,13 +111,3 @@
   doc
 }
 
-#show: conf
-
-#lorem(100)
-
-$
-  a^2 + b^2 = c
-$ <eq>
-
-#lorem(100) @eq #lorem(100)
-
