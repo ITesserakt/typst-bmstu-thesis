@@ -21,9 +21,10 @@
   global_task: "@Основная задача, на решение которой направлена работа@",
   abstract: "@Начать можно так: “Работа посвящена...”. Объём около 0.5 страницы. Здесь следует кратко рассказать о чём работа, на что направлена, что и какими методами было достигнуто. Реферат должен быть подготовлен так, чтобы после её прочтения захотелось перейти к основному тексту работы.@",
   year: datetime.today().year(),
-  slides: ([Введение], ),
-  keywords: ("@keywords@", ),
+  slides: ([Введение],),
+  keywords: ("@keywords@",),
   solved_tasks: ("предложено ...", "создано ...", "разработано ...", "проведены вычислительные эксперименты ..."),
+  insert_pages: ("title", "abstract"),
   doc,
 ) = {
   import "preambule.typ": conf
@@ -36,7 +37,7 @@
   set document(
     author: author,
     title: theme,
-    date: datetime.today()
+    date: datetime.today(),
   )
 
   let named_args = (
@@ -61,16 +62,22 @@
     consultant: consultant,
     slides: slides,
     keywords: keywords,
-    solved_tasks: solved_tasks
+    solved_tasks: solved_tasks,
   )
 
-  title_page(..named_args)
-  pagebreak()
-  task_page(..named_args)
-  pagebreak()
-  plan_page(..named_args)
-  pagebreak()
-  abstract_page(..named_args)
+  let first = state("__is_first_page", true)
+  let insert_if_contains(name, body) = context if (
+    insert_pages == auto or (type(insert_pages) == array and insert_pages.contains(name))
+  ) {
+    if not first.get() { pagebreak() }
+    body(..named_args)
+    first.update(false)
+  } else {}
+
+  insert_if_contains("title", title_page)
+  insert_if_contains("task", task_page)
+  insert_if_contains("plan", plan_page)
+  insert_if_contains("abstract", abstract_page)
   wrap_with_big_heading(outline(depth: 3, indent: 1.25cm, title: [Содержание]))
 
   doc
