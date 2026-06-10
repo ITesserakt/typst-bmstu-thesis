@@ -1,8 +1,6 @@
 #let title_page(
   ..args,
 ) = [
-  #set page(numbering: none)
-
   #{
     set par(leading: 0.5em)
     set text(size: 11pt)

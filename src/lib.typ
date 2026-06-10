@@ -74,9 +74,12 @@
     first.update(false)
   } else {}
 
-  insert_if_contains("title", title_page)
-  insert_if_contains("task", task_page)
-  insert_if_contains("plan", plan_page)
+  {
+    set page(numbering: none)
+    insert_if_contains("title", title_page)
+    insert_if_contains("task", task_page)
+    insert_if_contains("plan", plan_page)
+  }
   insert_if_contains("abstract", abstract_page)
   wrap_with_big_heading(outline(depth: 3, indent: 1.25cm, title: [Содержание]))
 
