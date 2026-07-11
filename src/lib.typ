@@ -1,5 +1,5 @@
 #import "task.typ": add_task_part
-#import "preambule.typ": big_heading, wrap_with_big_heading
+#import "preambule.typ"
 
 #let template(
   author: "@Фамилия И.О.@",
@@ -81,7 +81,7 @@
     insert_if_contains("plan", plan_page)
   }
   insert_if_contains("abstract", abstract_page)
-  wrap_with_big_heading(outline(depth: 3, indent: 1.25cm, title: [Содержание]))
+  preambule.wrap_with_big_heading(outline(depth: 3, indent: 1.2cm, title: [СОДЕРЖАНИЕ]))
 
   doc
 }
@@ -95,7 +95,7 @@
   counter(figure.where(kind: table)).update(0)
   counter(math.equation).update(0)
 
-  show heading.where(depth: 1): set heading(numbering: "Приложение A. ", supplement: "Приложение")
+  show heading.where(depth: 1): set heading(numbering: none, supplement: "Приложение")
   show heading.where(depth: 2): set heading(numbering: "A.1", supplement: "Приложение")
   show heading.where(depth: 1): set align(center)
 

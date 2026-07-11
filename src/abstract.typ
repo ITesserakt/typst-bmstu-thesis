@@ -1,13 +1,14 @@
 #let abstract_page(..args) = [
   #import "preambule.typ": big_heading
 
-  #align(center)[*РЕФЕРАТ*]
+  #align(center, text(size: 16pt)[*РЕФЕРАТ*])
 
   #v(1em)
 
-  #let count_of(of) = context { counter(of).final().last() }
+  #let count_of(of) = context { counter(of).at(bibliography).last() }
+  #let citations = context{ query(cite).map(it => it.key).dedup().len() }
 
-  выпускная квалификационная работа: #count_of(page) с., #count_of(figure.where(kind: image)) рис., #count_of(figure.where(kind: table)) табл., #count_of(cite) источн.
+  выпускная квалификационная работа: #counter(page).at(<appendix-start>).last() с., #count_of(figure.where(kind: image)) рис., #count_of(figure.where(kind: table)) табл., #citations источн.
 
   #v(1em)
 
@@ -20,13 +21,11 @@
 
   *Тип работы*: выпускная квалификационная работа.
 
-  *Тема работы*: _"#{ args.at("theme", default: "@Тема работы@") }"_
-
-  *Объект исследований*: #args.at("object", default: "@Объект исследований@")
+  *Тема работы*: "#{ args.at("theme", default: "@Тема работы@") }"
 
   *Основная задача, на решение которой направлена работа*: #args.at("global_task", default: "@Основная задача, на решение которой направлена работа@")
 
   *Цель работы*: #args.at("goal", default: "@Цель выполнения работы@")
 
-  В результате выполнения работы: #args.at("solved_tasks", default: ("предложено ...", "создано ...", "разработано ...", "проведены вычислительные эксперименты ...")).enumerate(start: 1).map(((i, it)) => [#{ i }) #it]).join("; ").
+  // В результате выполнения работы: #args.at("solved_tasks", default: ("предложено ...", "создано ...", "разработано ...", "проведены вычислительные эксперименты ...")).enumerate(start: 1).map(((i, it)) => [#{ i }) #it]).join("; ").
 ]

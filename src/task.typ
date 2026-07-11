@@ -20,9 +20,11 @@
 
     [
       Министерство науки и высшего образования Российской Федерации \
+      #v(0.5em)
       Федеральное государственное автономное образовательное учреждение высшего образования \
-      "Московский государственный технический университет имени Н.Э. Баумана (национальный \
-      исследовательский университет)" (МГТУ им. Н.Э. Баумана)
+      "Московский государственный технический университет имени Н.Э. Баумана \
+      (национальный исследовательский университет)" \
+      (МГТУ им. Н.Э. Баумана)
     ]
   }
 
@@ -106,7 +108,7 @@
     table.cell(colspan: 2)[Тема выпускной квалификационной работы утверждена распоряжением по факультету:],
     [Название факультета:], args.at("faculty", default: ["Робототехника и комплексная автоматизация"]),
     [Дата и рег. номер распоряжения:],
-    [№ #empty_underline(2cm) от "#empty_underline(1cm)" #empty_underline(3cm) #args.at("year", default: datetime.today().year()) г.],
+    [№ #empty_underline(2.5cm) от "#empty_underline(1cm)" #empty_underline(3cm) #args.at("year", default: datetime.today().year()) г.],
   )
 
   #v(1em)
@@ -123,14 +125,15 @@
   }
 
   *Оформление выпускной квалификационной работы:*
-  #let final_count(of) = counter(of).final().first()
+  #let final_count(of) = counter(of).at(bibliography).first()
+  #let citation_count = query(cite).map(it => it.key).dedup().len()
 
-  Расчётно-пояснительная записка на #context { final_count(page) } листах формата А4. \
+  Расчётно-пояснительная записка на #context { counter(page).at(<appendix-start>).first() } листах формата А4. \
   Перечень графического (иллюстративного) материала (чертежи, плакаты, слайды и т.п.):
 
   #table(
     columns: 1fr,
-    [количество: #context { final_count(figure.where(kind: image)) } рис., #context { final_count(figure.where(kind: table)) } табл., #context { final_count(cite) } источн.],
+    [количество: #context { final_count(figure.where(kind: image)) } рис., #context { final_count(figure.where(kind: table)) } табл., #context { citation_count } источн.],
     ..args.at("slides", default: ()).enumerate(start: 1).map(((i, it)) => [
       Слайд #i. #it
     ])

@@ -11,9 +11,11 @@
 
     [
       Министерство науки и высшего образования Российской Федерации \
+      #v(0.5em)
       Федеральное государственное автономное образовательное учреждение высшего образования \
-      "Московский государственный технический университет имени Н.Э. Баумана (национальный \
-      исследовательский университет)" (МГТУ им. Н.Э. Баумана)
+      "Московский государственный технический университет имени Н.Э. Баумана \
+      (национальный исследовательский университет)" \
+      (МГТУ им. Н.Э. Баумана)
     ]
   }
 
@@ -23,7 +25,7 @@
     set grid.hline(stroke: 0.5pt)
 
     grid(
-      columns: (auto, auto, 1fr, 15%, auto, auto),
+      columns: (auto, auto, 1fr, 25%, auto, auto),
       inset: (y: 0.25em),
       column-gutter: 0.5em,
       // stroke: black,
@@ -110,42 +112,42 @@
     let year = args.at("year", default: datetime.today().year())
     let supervisor = args.at("supervisor", default: "@Фамилия И.О.@")
     let mkDate(day, month) = [
-      #let _day = if day == none { empty_underline(0.4cm) } else { day }
-      #let _month = if month == none { empty_underline(0.4cm) } else { month }
+      #let _day = if day == none { empty_underline(0.3cm) } else { day }
+      #let _month = if month == none { empty_underline(0.3cm) } else { month }
 
-      #set text(size: 8pt)
+      #set text(size: 10pt)
       #{ _day }.#{ _month }.#{ year }
     ]
     let final_task_parts = task_parts.final()
 
     table(
-      columns: (6%, 1fr, 12%, 12%, 16%, 16%),
+      columns: (6%, 3fr, 1fr, 1fr, 17%, 17%),
       align: (x, y) => if y == 0 or y == 1 or x != 1 { center + horizon } else { left + horizon },
       table.cell(rowspan: 2)[№ п/п],
       table.cell(rowspan: 2)[Наименование этапов выпускной квалификационной работы],
-      table.cell(colspan: 2)[Сроки выполнения],
+      table.cell(colspan: 2)[Сроки выполнения этапов],
       table.cell(colspan: 2)[Отметка о выполнении],
       [план], [факт], [Должность], [ФИО, подпись],
 
       [1.],
       [Задание на выполнение работы. \ Формулировка проблемы, цели и задач],
-      mkDate(none, "02"),
-      mkDate(none, none),
-      text(size: 8pt)[Руководитель ВКР],
+      mkDate("11", "02"),
+      none,
+      text(size: 10pt)[Руководитель ВКР],
       text(size: 8pt, supervisor),
 
       [2.],
       [Часть 1: #underline(final_task_parts.first().name)],
       mkDate(..final_task_parts.first().planned_date),
-      mkDate(none, none),
-      text(size: 8pt)[Руководитель ВКР],
+      none,
+      text(size: 10pt)[Руководитель ВКР],
       text(size: 8pt, supervisor),
 
       [3.],
       [Утверждение окончательных формулировок решаемой проблемы, цели работы и задачи],
-      mkDate(none, "02"),
-      mkDate(none, none),
-      text(size: 8pt)[Заведующий кафедрой],
+      mkDate("27", "02"),
+      none,
+      text(size: 10pt)[Заведующий кафедрой],
       text(size: 8pt, args.at("head_of_faculty", default: "@Фамилия И.О.@")),
 
       ..{
@@ -157,8 +159,8 @@
               [#{ i }.],
               [Часть #{ i - 2 }: #underline(it.name)],
               mkDate(..it.planned_date),
-              mkDate(none, none),
-              text(size: 8pt)[Руководитель ВКР],
+              none,
+              text(size: 10pt)[Руководитель ВКР],
               text(size: 8pt, supervisor),
             )
           })
@@ -167,44 +169,44 @@
 
       [#{ final_task_parts.len() + 3 }.],
       [1-я редакция работы],
-      mkDate(none, "05"),
-      mkDate(none, none),
-      text(size: 8pt)[Руководитель ВКР],
+      mkDate("31", "05"),
+      none,
+      text(size: 10pt)[Руководитель ВКР],
       text(size: 8pt, supervisor),
 
       [#{ final_task_parts.len() + 4 }.],
       [Подготовка доклада и презентации],
-      mkDate(none, "06"),
-      mkDate(none, none),
+      mkDate("16", "06"),
       none,
-      none,
+      text(size: 10pt)[Руководитель ВКР],
+      text(size: 8pt, supervisor),
 
       [#{ final_task_parts.len() + 5 }.],
-      [Заключение руководителя],
-      mkDate(none, "06"),
-      mkDate(none, none),
-      text(size: 8pt)[Руководитель ВКР],
+      [Отзыв руководителя],
+      mkDate("19", "06"),
+      none,
+      text(size: 10pt)[Руководитель ВКР],
       text(size: 8pt, supervisor),
 
       [#{ final_task_parts.len() + 6 }.],
-      [Допуск работы к защите на ГЭК],
-      mkDate(none, "06"),
-      mkDate(none, none),
-      text(size: 8pt)[Нормоконтролер],
+      [Нормоконтроль],
+      mkDate("22", "06"),
+      none,
+      text(size: 10pt)[Нормоконтролер],
       text(size: 8pt, args.at("normocontroller", default: "@Фамилия И.О.@")),
 
       [#{ final_task_parts.len() + 7 }.],
       [Внешняя рецензия],
-      mkDate(none, "06"),
-      mkDate(none, none),
+      mkDate("23", "06"),
       none,
-      none,
+      text(size: 10pt)[Секретарь ГЭК],
+      text(size: 8pt, args.at("secretary", default: "@Фамилия И.О.@")),
 
       [#{ final_task_parts.len() + 8 }.],
       [Защита работы на ГЭК],
-      mkDate(none, "06"),
-      mkDate(none, none),
-      text(size: 8pt)[Секретарь ГЭК],
+      mkDate("26", "06"),
+      none,
+      text(size: 10pt)[Секретарь ГЭК],
       text(size: 8pt, args.at("secretary", default: "@Фамилия И.О.@")),
     )
   }

@@ -5,13 +5,13 @@
   heading(
     depth: 1,
     numbering: none,
-    upper[*#content*],
+    content,
   )
 }
 
 #let wrap_with_big_heading(body) = {
   show heading: set align(center)
-  show heading: it => { upper(it) }
+  show heading: it => { it }
 
   body
 }
@@ -33,25 +33,34 @@
   )
   set text(
     font: "Times New Roman",
+    fallback: false,
     size: 14pt,
-    lang: "ru",
+    lang: "RU",
     kerning: false,
     hyphenate: false,
+    overhang: false,
+    region: "ru",
+    ligatures: false
   )
   show raw: set text(font: "Fira Code")
+  set raw(theme: none)
 
   set par(
     justify: true,
-    linebreaks: "optimized",
+    // linebreaks: "optimized",
     first-line-indent: (amount: 1.25cm, all: true),
     spacing: 1em,
     leading: 0.75em,
   )
 
   set heading(numbering: "1.1", outlined: true)
-  show heading: set text(size: 14pt)
-  show heading: set par(justify: false)
-  show heading: set block(above: 2em, below: 1.5em, breakable: false)
+  show heading: it => {
+    // show " ": [#sym.zws#h(4pt)]
+    set text(size: if it.depth == 1 { 16pt } else { 14pt })
+    set par(justify: false)
+    set block(above: 2em, below: 1.5em, breakable: false)
+    it
+  }
   show heading.where(depth: 1): it => {
     pagebreak()
     it
@@ -62,20 +71,45 @@
   show heading.where(depth: 4): set heading(supplement: "Подпункт")
 
   set figure(supplement: "Рисунок", numbering: chapter_aware_numbering)
-  show figure: set block(breakable: true, sticky: true)
+  show figure: set block(breakable: false, sticky: false)
   set figure.caption(separator: [ -- ])
-  show figure.caption: set par(leading: 0.5em)
+  show figure.caption: it => {
+    set par(leading: 0.5em)
+    set par(spacing: 0.5em)
+    if it.kind == table {
+      let n = counter(figure.where(kind: table)).at(here())
+      let number = numbering(it.numbering, ..n)
+      align(right + top)[
+        #it.supplement #number
+
+        #it.body
+      ]
+    }
+    else if it.kind == raw {
+      let n = counter(figure.where(kind: raw)).at(here())
+      let number = numbering(it.numbering, ..n)
+      align(right + top)[
+        #it.supplement #number
+
+        #it.body
+      ]
+    } else {
+      it
+    }
+  }
 
   show figure.where(kind: table): set figure(supplement: "Таблица", numbering: chapter_aware_numbering)
   show figure.where(kind: table): set figure.caption(position: top)
   show figure.caption.where(kind: table): set block(sticky: true)
-  show figure.caption.where(kind: table): it => {
-    set align(left)
-    // TODO: add "Продолжение таблицы ..." on table break
-    it
-  }
+  // show figure.caption.where(kind: table): it => {
+  //   set align(left)
+  //   // TODO: add "Продолжение таблицы ..." on table break
+  //   it
+  // }
 
   show figure.where(kind: raw): set figure(supplement: "Листинг")
+  show figure.where(kind: raw): set figure.caption(position: top)
+  show figure.caption.where(kind: table): set block(sticky: true)
 
   set table.header(repeat: false)
   set table(align: left + top)
@@ -83,7 +117,30 @@
 
   set list(marker: [--], indent: 1.25cm)
   set enum(indent: 1.25cm, numbering: "1)")
-  set math.equation(numbering: chapter_aware_numbering.with(pattern: "(1.1)"))
+  set math.equation(numbering: chapter_aware_numbering.with(pattern: "(1.1)"), supplement: none)
+
+  show math.equation.where(block: true): set par(spacing: 2em)
+  // Автоматическая нумерация используемых формул
+  show math.equation.where(block: true): it => if (
+    it.numbering != none and (not it.has("label") or query(ref.where(target: it.label)).len() == 0)
+  ) [
+    #counter(math.equation).update(v => calc.max(0, v - 1))
+    #math.equation(it.body, block: true, numbering: none)
+  ] else {
+    it
+  }
+
+  // Именование рисунков и таблиц не учитывает падеж
+  show ref.where(form: "normal"): set ref(supplement: it => {
+    if it.func() == figure {
+      if it.kind == image {
+        return "рис. "
+      } else if it.kind == table {
+        return "табл."
+      }
+    }
+    it.supplement
+  })
 
   show math.equation.where(block: true): set par(spacing: 2em)
   // Автоматическая нумерация используемых формул
